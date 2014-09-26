@@ -1,10 +1,14 @@
 (function(){
 	/** Set up the variables **/
 	var form, keywords, val, buildURL, redirectURL;
+	
+	/** Set up Chrome variables **/
+	var currentTab;
 
 	form = $("#search");
 	keywords = form.find('#keywords');
 
+	/** Convenience function for adding/removing error classes **/
 	(function() {
 		var errClass, elem, parent, parentClass;
 		
@@ -24,6 +28,16 @@
 			}
 		});
 		
+	}).call(this);
+
+	/** Get the current tab object **/
+	(function() {
+		chrome.tabs.query({
+			currentWindow: true,
+			active: true
+		}, function(tab) {
+			currentTab = tab[0]
+		});
 	}).call(this);
 	
 	/** Build the TPC URL **/
@@ -65,9 +79,17 @@
 				namekeys: keywords.val()
 			});
 			
-			chrome.tabs.create({
-				url: redirectURL
-			});
+			/** Open in a new tab if on a domain other than tipidpc.com **/
+			if (currentTab.url.indexOf('tipidpc.com') === -1) {
+				chrome.tabs.create({
+					url: redirectURL
+				});
+			} else {
+				/** Otherwise change the current tab URL **/
+				chrome.tabs.update({
+					url: redirectURL
+				});
+			}
 		} else {
 			keywords.addError();
 			alert("You can't search for nothing, doofus!");

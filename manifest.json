@@ -8,5 +8,6 @@
 		"default_icon": "icon.png",
 		"default_popup": "popup.html"
 	},
-	"author": "JP Caparas"
+	"author": "JP Caparas",
+	"permissions": ["tabs"]
 }
