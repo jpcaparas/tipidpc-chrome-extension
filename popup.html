@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="popup-wrapper" style="min-width: 300px;">
+			<div class="container">
+				<form id="search">
+					<h2 class="text-center">Start searching</h2>
+					<fieldset class="basic">
+						<div class="form-group">
+							<input id="keywords" type="text" class="form-control input-lg" placeholder="Keyword/s (e.g. GTX 980)" />
+						</div>
+					</fieldset>
+					<fieldset class="advanced">
+						<legend class="text-center"><a class="show-advanced" href="#">Show Advanced Options <span class="small glyphicon glyphicon-chevron-right"></span></a></legend>
+						<div style="display: none;">
+							<div class="form-group">
+								<label for="condition">
+									Condition: <select id="condition" class="form-control">
+									<option selected>Brand new</option>
+									<option>Used</option>
+									</select>
+								</label>
+							</div>
+						</div>
+					</fieldset>
+					<div class="form-group">
+						<button id="submit" class="btn btn-success btn-lg btn-block" type="submit">Search
+					</div>
+				</form>
+			</div>
+		</div>
+		<script src="./jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="./popup.js" type="text/javascript"></script>
+	</body>
+</html>

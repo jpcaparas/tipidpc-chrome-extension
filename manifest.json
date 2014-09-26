@@ -1,0 +1,12 @@
+{
+	"manifest_version": 2,
+	"name": "TipidPC.com Easy Search",
+	"version": "0.0.1",
+	"description": "Easy search through this widget",
+	"browser_action": {
+		"default_title": "TipidPC.com Easy Search",
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	"author": "JP Caparas"
+}
