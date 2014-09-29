@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "TipidPC.com Easy Search",
 	"version": "0.0.1",
-	"description": "Easy search through this widget",
+	"description": "Search the TipidPC.com marketplace easily using this FREE Chrome extension",
 	"browser_action": {
 		"default_title": "TipidPC.com Easy Search",
 		"default_icon": "icon.png",

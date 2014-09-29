@@ -16,19 +16,69 @@
 							<input id="keywords" type="text" class="form-control input-lg" placeholder="Keyword/s (e.g. GTX 980)" />
 						</div>
 					</fieldset>
-					<fieldset class="advanced">
-						<legend class="text-center"><a class="show-advanced" href="#">Show Advanced Options <span class="small glyphicon glyphicon-chevron-right"></span></a></legend>
-						<div style="display: none;">
-							<div class="form-group">
-								<label for="condition">
-									Condition: <select id="condition" class="form-control">
-									<option selected>Brand new</option>
-									<option>Used</option>
-									</select>
-								</label>
-							</div>
+					<a class="toggle-advanced text-center" href="#"><h4>Toggle Advanced Options <span class="small glyphicon glyphicon-chevron-right"></span></h4></a>
+					<fieldset style="display:none;" class="advanced">
+						<div class="checkbox">
+							<label for="isBuying">
+								<input id="isBuying" class="form-checkbox" type="checkbox" /> I'm looking to buy
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="description">Description
+								<input id="description" class="form-control" type="text">
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="condition">
+								Condition: <select id="condition" class="form-control">
+									<option value="" selected>Any</option>
+									<option value="bn">Brand new</option>
+									<option value="us">Already used</option>
+									<option value="nr">Newly replaced</option>
+									<option value="df">Defective</option>
+								</select>
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="warranty">
+								Warranty: <select id="warranty" class="form-control">
+									<option value="" selected>Any</option>
+									<option value="personal">Personal warranty</option>
+									<option value="shop">Shop warranty</option>
+									<option value="none">No warranty</option>
+								</select>
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="priceMin">Price min
+								<input id="priceMin" class="form-control" type="text">
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="priceMax">Price max
+								<input id="priceMax" class="form-control" type="text">
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="sortBy">
+								Sort by: <select id="sortBy" class="form-control">
+									<option value="postdate" selected>Post date</option>
+									<option value="price">Price</option>
+									<option value="name">Name</option>
+									<option value="owner">Item owner</option>
+								</select>
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="sortOrder">
+								Sort by: <select id="sortOrder" class="form-control">
+									<option value="desc" selected>Descending</option>
+									<option value="asc">Ascending</option>
+								</select>
+							</label>
 						</div>
 					</fieldset>
+					<hr />
 					<div class="recent-searches"></div>
 					<div class="form-group">
 						<button id="submit" class="btn btn-success btn-lg btn-block" type="submit">Search

@@ -1,70 +1,41 @@
 /** Main function (used as a callback) **/
 var main = (function(){
 	return function(currentTab) {
-		var form, keywords, val, tpcURL,
-		recentSearches, recentSearchesInner;
+		var form, keywords, tpcURL, fields;
 
 		form = $("#search");
-		keywords = form.find('#keywords');
 		
-		$('.show-advanced').on('click', function() {
-			alert("This feature will come soon enough. Stay tuned!");
+		fields = {
+			keywords: form.find('#keywords')
+		};
+		
+		fields = $.fn.extend(fields, {
+			description: form.find('#description'),
+			categories: form.find('#categories'),
+			condition: form.find('#condition'),
+			warranty: form.find('#warranty'),
+			priceMin: form.find('#priceMin'),
+			priceMax: form.find('#priceMax'),
+			sortBy: form.find('#sortBy'),
+			sortOrder: form.find('#sortOrder'),
+			isBuying: form.find('#isBuying')
 		});
 		
 		/********************* 
 		<-- BEGIN HOUSEKEEPING
 		 ********************/
-		
-		/** Populate fields with existing storage data **/
-		chrome.storage.sync.get('fields', function(data) {
-			keywords.val(data.fields.keywords || '');
-		});
-		
-		/** Get list of recent searches **/
-		chrome.storage.sync.get('recentSearches', function(data) {
-			recentSearches = data.recentSearches || [];
-			
-			/** If there are recent searches, show them **/
-			if (recentSearches.length) {
-				/** Set the maximum recent searches to just five (5) **/
-				if (recentSearches.length > 5) {
-					recentSearches = recentSearches.slice(recentSearches.length - 5);
-				}
-			
-				$.each(recentSearches, function(index, data) {
-					$('.recent-searches')
-						.append(
-							$('<a />')
-								.attr({
-									href: data.url
-								})
-								.text(data.keywords)
-						)
-						if (index < (recentSearches.length - 1)) {
-							$('.recent-searches')
-								.append(
-									$('<span />')
-										.addClass('sep')
-										.text(' | ')
-								)
-						}
-				});
-				
-				recentSearchesInner = $('<p />')
-					.text('Recent searches: ');
-				
-				$('.recent-searches').wrapInner(recentSearchesInner);
-				
-				$('.recent-searches').find('a').on('click', function() {
-					chrome.tabs.update({
-						url: $(this).attr('href')
-					});
-				});
+		 
+		/** Highlight the entire content of all input fields **/
+		fields.keywords.focus();
+		 
+		/** Show recent searches **/
+		chrome.storage.sync.get('searches', function(data) {
+			searches = data.searches || [];
+			if (searches.length) {
+				searches = (searches.length >  5) ? searches.slice(searches.length - 5) : searches;
+				$('.recent-searches').searches(searches);
 			}
 		});
-		
-		/** Focus on main input field **/
-		form.find('#keywords').focus();
 		
 		/********************
 		 END HOUSEKEEPING -->
@@ -74,56 +45,97 @@ var main = (function(){
 		<-- BEGIN EVENT HANDLING
 		********************/
 		
-		/** Submit the form **/ 
-		form.on("submit", function(e) {
-			e.preventDefault();
-			/** Remove errors first **/
-			keywords.removeError();
+		/** Toggle advanced search **/
+		(function() {
+			var advanced, toggleAdvanced, glyphicon, chevron, text;
+		
+			advanced = $('.advanced');
+			toggleAdvanced = $('.toggle-advanced');
+			glyphicon = toggleAdvanced.find('.glyphicon');
+		
+			chevron = {
+				on: 'glyphicon-chevron-down',
+				off: 'glyphicon-chevron-right',
+			};
 			
-			/** Set the value **/
-			val = $.trim(keywords.val());
-
-			/** Proceed only if a value was passed **/
-			if (val.length) {
-				/** Save the query to chrome.storage **/
-				chrome.storage.sync.set({
-					fields: {
-						keywords: val
-					}
-				});
-			
-				/** Build the redirecct URL **/
-				tpcURL = $.tpcURL({
-					namekeys: val
-				});
+			toggleAdvanced.on('click', function(e) {
+				e.preventDefault();
 				
-				/** Add the data to recent searches **/
-				recentSearches.push({
-					keywords: val,
-					url: tpcURL
-				})
-				
-				chrome.storage.sync.set({
-					recentSearches: recentSearches
-				});
-				
-				/** Open on new tab if on a domain other than tipidpc.com **/
-				if (currentTab.url.indexOf('tipidpc.com') === -1) {
-					chrome.tabs.create({
-						url: tpcURL
-					});
+				if (advanced.is(':hidden')) {
+					advanced
+						.stop()
+						.fadeIn('slow', function() {
+							glyphicon
+								.removeClass(chevron.off)
+								.addClass(chevron.on);
+						});
 				} else {
-					/** Otherwise change the current tab URL **/
-					chrome.tabs.update({
-						url: tpcURL
-					});
+					advanced
+						.stop()
+						.fadeOut('slow', function() {
+							glyphicon
+								.removeClass(chevron.on)
+								.addClass(chevron.off);
+						});
 				}
-			} else {
-				/** Advise user on how to fix the issue **/
-				keywords.addError();
-				alert("You can't search for nothing, doofus!");
-			}
-		});
+			});
+		}).call(this);
+		
+		/** Submit the form **/ 
+		(function() {
+			form.on('submit', function(e) {
+				e.preventDefault();
+				
+				/** Remove errors first **/
+				fields.keywords.removeError();
+				
+				/** Set the value **/
+				keywords = $.trim(fields.keywords.val());
+
+				/** Proceed only if a value was passed **/
+				if (keywords.length) {				
+					/** Build the redirecct URL **/
+					tpcURL = $.tpcURL({
+						namekeys: keywords,
+						descriptionkeys: fields.description.val(),
+						cat: fields.categories.val(),
+						condition: fields.condition.val(),
+						warranty: fields.warranty.val(),
+						pricelow: fields.priceMin.val(),
+						pricehigh: fields.priceMax.val(),
+						ord: fields.sortBy.val(),
+						dir: fields.sortOrder.val()
+					}, fields.isBuying.prop('checked'));
+					
+					/** Add the data to recent searches **/
+					searches.push({
+						keywords: keywords,
+						url: tpcURL
+					})
+					
+					/** Save the search **/
+					chrome.storage.sync.set({
+						searches: searches
+					});
+					
+					/** Open on new tab if on a domain other than tipidpc.com **/
+					if (currentTab.url.indexOf('tipidpc.com') === -1) {
+						chrome.tabs.create({
+							url: tpcURL
+						});
+					} else {
+						/** Otherwise change the current tab URL **/
+						chrome.tabs.update({
+							url: tpcURL
+						});
+					}
+				} else {
+					/** Advise user on how to fix the issue **/
+					fields.keywords.addError();
+					alert("You can't search for nothing, doofus!");
+				}
+			});
+		}).call(this);
 		
 		/************************
 		END EVENT HANDLING -->
